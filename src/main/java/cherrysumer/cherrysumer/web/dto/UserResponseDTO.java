@@ -1,13 +1,10 @@
 package cherrysumer.cherrysumer.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class UserResponseDTO {
-    @Builder
-    @Getter
+
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class successLoginDTO {

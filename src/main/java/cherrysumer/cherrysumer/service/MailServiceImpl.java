@@ -1,6 +1,5 @@
 package cherrysumer.cherrysumer.service;
 
-import cherrysumer.cherrysumer.converter.VerificationConverter;
 import cherrysumer.cherrysumer.domain.MailCode;
 import cherrysumer.cherrysumer.exception.ErrorCode;
 import cherrysumer.cherrysumer.exception.handler.CertificationHandler;
@@ -55,13 +54,18 @@ public class MailServiceImpl implements MailService{
         String code = tokenProvider.generatedMailCode();
         MailCode verification;
         if(codeRepository.existsByEmail(email)) {
-            verification = codeRepository.findByEmail(email).toBuilder()
-                            .status(false)
-                            .code(code)
-                            .expirtime(LocalDateTime.now().plusMinutes(10))
-                            .build();
+            verification = codeRepository.findByEmail(email);
+
+            verification.setStatus(false);
+            verification.setCode(code);
+            verification.setExpirtime(LocalDateTime.now().plusMinutes(10));
         } else {
-            verification = VerificationConverter.createVerificationCode(email, code);
+            verification = new MailCode();
+
+            verification.setEmail(email);
+            verification.setCode(code);
+            verification.setStatus(false);
+            verification.setExpirtime(LocalDateTime.now().plusMinutes(10));
         }
 
         codeRepository.save(verification);
@@ -86,6 +90,7 @@ public class MailServiceImpl implements MailService{
         }
 
         // 인증 성공, 상태 업데이트
-        codeRepository.save(verification.toBuilder().status(true).build());
+        verification.setStatus(true);
+        codeRepository.save(verification);
     }
 }

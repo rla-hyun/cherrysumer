@@ -1,16 +1,16 @@
 package cherrysumer.cherrysumer.domain;
 
-import cherrysumer.cherrysumer.converter.ListConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Data
 public class User extends BaseEntity{
 
     @Id
@@ -32,7 +32,8 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String email;
 
-    @Convert(converter = ListConverter.class)
+    @Column(name = "category", columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     private List<Long> category;
 
     private String region;

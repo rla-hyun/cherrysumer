@@ -55,15 +55,14 @@ public class UserRequestDTO {
     public static class userLoginRequestDTO {
         @NotEmpty(message = "아이디, 비밀번호를 입력하세요.")
         private String loginId;
-        @NotEmpty(message = "아이디, 비밀번호를  입력하세요.")
+        @NotEmpty(message = "아이디, 비밀번호를 입력하세요.")
         private String password;
     }
 
-    @Getter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     public static class userInfoDTO {
-        private String nickname;
+        private Long id;
     }
 }

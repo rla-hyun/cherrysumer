@@ -49,9 +49,11 @@ public class TokenProvider implements InitializingBean {
         long exp = (new Date()).getTime() + Long.valueOf(this.accessTokenExptime*1000); // unix time 설정
         Date expirtime = new Date(exp); // 만료시간 30일 설정
 
+        Claims claims = Jwts.claims().setSubject(user.getId().toString());
+
         return Jwts.builder()
                 .setHeader(createHeader())
-                .setClaims(createClaims(user))
+                .setClaims(claims)
                 .setIssuer("cherrysumer")
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expirtime)
@@ -73,18 +75,15 @@ public class TokenProvider implements InitializingBean {
     private Map<String, Object> createClaims(UserRequestDTO.userInfoDTO user) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("nickname", user.getNickname());
+        claims.put("id", user.getId());
         return claims;
     }
 
-    private Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody();
-    }
-
-    public String getUserNickname(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("nickname").toString();
+    public String getUserId(String token) {
+        return Jwts.parser().setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean isValidToken(String token) {

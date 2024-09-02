@@ -51,7 +51,7 @@ public class UserController {
     @PostMapping("/email-verification")
     public ResponseEntity<String> requestverificationCode(@RequestParam("email") String email) throws NoSuchAlgorithmException, MessagingException {
         mailService.sendCode(email);
-        return ResponseEntity.status(HttpStatus.OK).body("인증 코드 전송 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("인증 번호 전송 완료");
     }
 
     // 이메일 인증

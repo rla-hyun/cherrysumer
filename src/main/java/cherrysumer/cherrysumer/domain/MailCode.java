@@ -6,10 +6,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
 public class MailCode {
 
     @Id

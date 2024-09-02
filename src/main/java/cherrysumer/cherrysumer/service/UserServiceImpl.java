@@ -1,9 +1,7 @@
 package cherrysumer.cherrysumer.service;
 
-import cherrysumer.cherrysumer.converter.UserConverter;
 import cherrysumer.cherrysumer.domain.User;
 import cherrysumer.cherrysumer.exception.ErrorCode;
-import cherrysumer.cherrysumer.exception.handler.CertificationHandler;
 import cherrysumer.cherrysumer.exception.handler.UserErrorHandler;
 import cherrysumer.cherrysumer.jwt.TokenProvider;
 import cherrysumer.cherrysumer.repository.UserRepository;
@@ -28,7 +26,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void userJoin(UserRequestDTO.userJoinRequestDTO request) {
         String password = hashPassword(request.getPasswd());
-        User user = UserConverter.createUser(request, password);
+
+        User user = new User();
+        user.setLoginId(request.getLoginId());
+        user.setName(request.getName());
+        user.setNickname(request.getNickname());
+        user.setEmail(request.getEmail());
+        user.setPasswd(password);
+        user.setCategory(request.getCategory());
+        user.setRegion(request.getRegion());
+
         userRepository.save(user);
     }
 
@@ -50,8 +57,9 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO.successLoginDTO userLogin(UserRequestDTO.userLoginRequestDTO request) {
         User user = userRepository.findUserByLoginId(request.getLoginId());
         if(checkPassword(request.getPassword(), user)) {
-            String token = tokenProvider.generateJwtToken(UserConverter.createUserDTO(user));
-            return UserConverter.successLogin(token);
+            String token = tokenProvider.generateJwtToken(new UserRequestDTO.userInfoDTO(user.getId()));
+
+            return new UserResponseDTO.successLoginDTO(token);
         }
         throw new UserErrorHandler(ErrorCode._USER_NOT_FOUND);
     }
@@ -86,7 +94,7 @@ public class UserServiceImpl implements UserService {
     // 토큰에서 유저 데이터 가져오기
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
-        return userRepository.findUserByLoginId(loginId);
+        String userId = authentication.getName();
+        return userRepository.findUserById(Long.parseLong(userId));
     }
 }
